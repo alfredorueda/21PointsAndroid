@@ -8,6 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UserTokenManager {
 
+    private static final String BASE_URL = "http://192.168.1.173:8080/";
     private static UserTokenManager ourInstance;
     private Retrofit retrofit;
     private TokenService tokenService;
@@ -24,7 +25,7 @@ public class UserTokenManager {
     private UserTokenManager() {
 
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.1.173:8080/")
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

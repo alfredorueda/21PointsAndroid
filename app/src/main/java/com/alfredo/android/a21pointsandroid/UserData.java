@@ -1,14 +1,33 @@
 package com.alfredo.android.a21pointsandroid;
 
-public class UserLogin {
+public class UserData {
 
-    private String username;
+    private String login;
+    private String email;
     private String password;
+    private String username;
 
-    public UserLogin(String username, String password) {
+    public UserData(String username, String email, String password) {
+        this.login = username;
         this.username = username;
+        this.email = email;
         this.password = password;
     }
+
+    public UserData(String username, String password) {
+        this.username = username;
+        this.password = password;
+        this.email = "";
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
 
     public String getUsername() {
         return username;
@@ -28,8 +47,9 @@ public class UserLogin {
 
     @Override
     public String toString() {
-        return "UserLogin{" +
+        return "UserData{" +
                 "username='" + username + '\'' +
+                ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 '}';
     }

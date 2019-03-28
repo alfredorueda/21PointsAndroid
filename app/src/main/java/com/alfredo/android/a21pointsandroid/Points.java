@@ -28,6 +28,13 @@ public class Points {
     @Expose
     private User user;
 
+    public Points(String date, Integer exercise, Integer meals, Integer alcohol) {
+        this.date = date;
+        this.exercise = exercise;
+        this.meals = meals;
+        this.alcohol = alcohol;
+    }
+
     public Integer getId() {
         return id;
     }

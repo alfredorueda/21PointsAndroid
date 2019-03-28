@@ -118,6 +118,18 @@ public class LoginActivity extends AppCompatActivity implements RestAPICallBack 
     }
 
     @Override
+    public void onPostPoints(Points points) {
+        new AlertDialog.Builder(this)
+                .setTitle("POST POINTS")
+                .setMessage(points.toString())
+                .show();
+
+        RestAPIManager.getInstance().getPointsById(points.getId(), this);
+
+
+    }
+
+    @Override
     public void onLoginSuccess(UserToken userToken) {
         new AlertDialog.Builder(this)
                 .setTitle("Token")
@@ -137,7 +149,7 @@ public class LoginActivity extends AppCompatActivity implements RestAPICallBack 
                 .show();
 
 
-        RestAPIManager.getInstance().getPointsById(9052, this);
+        RestAPIManager.getInstance().postPoints(new Points("2019-03-14",1,1,1), this);
 
     }
 

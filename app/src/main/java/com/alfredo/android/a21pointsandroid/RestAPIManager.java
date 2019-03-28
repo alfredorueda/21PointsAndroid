@@ -1,5 +1,7 @@
 package com.alfredo.android.a21pointsandroid;
 
+import android.graphics.Point;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -51,6 +53,28 @@ public class RestAPIManager {
 
             @Override
             public void onFailure(Call<UserToken> call, Throwable t) {
+                restAPICallBack.onFailure(t);
+            }
+        });
+    }
+
+    public synchronized void postPoints(Points points, final RestAPICallBack restAPICallBack) {
+        final Points newUserPoints = points;
+        Call<Points> call = restApiService.postPoints(newUserPoints, "Bearer " + userToken.getIdToken());
+
+        call.enqueue(new Callback<Points>() {
+            @Override
+            public void onResponse(Call<Points> call, Response<Points> response) {
+
+                if (response.isSuccessful()) {
+                    restAPICallBack.onPostPoints(response.body());
+                } else {
+                    restAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Points> call, Throwable t) {
                 restAPICallBack.onFailure(t);
             }
         });

@@ -1,46 +1,24 @@
 package com.alfredo.android.a21pointsandroid;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
 
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoginCallback {
+public class LoginActivity extends AppCompatActivity implements RestAPICallBack {
 
 
     // UI references.
@@ -117,7 +95,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
             // form field with an error.
             focusView.requestFocus();
         } else {
-            UserTokenManager.getInstance().getUserToken(email, password, this);
+            RestAPIManager.getInstance().getUserToken(email, password, this);
         }
     }
 
@@ -132,7 +110,15 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
     }
 
     @Override
-    public void onSuccess(UserToken userToken) {
+    public void onGetPoints(Points points) {
+        new AlertDialog.Builder(this)
+                .setTitle("Points")
+                .setMessage(points.toString())
+                .show();
+    }
+
+    @Override
+    public void onLoginSuccess(UserToken userToken) {
         new AlertDialog.Builder(this)
                 .setTitle("Token")
                 .setMessage("token: "+ userToken.getIdToken())
@@ -149,6 +135,10 @@ public class LoginActivity extends AppCompatActivity implements LoginCallback {
                 .setNegativeButton(android.R.string.no, null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+
+
+        RestAPIManager.getInstance().getPointsById(9052, this);
+
     }
 
     @Override

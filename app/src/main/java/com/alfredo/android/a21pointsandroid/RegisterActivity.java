@@ -97,7 +97,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterCallb
             // form field with an error.
             focusView.requestFocus();
         } else {
-            UserTokenManager.getInstance().register(username, email, password, this);
+            RestAPIManager.getInstance().register(username, email, password, this);
         }
     }
 

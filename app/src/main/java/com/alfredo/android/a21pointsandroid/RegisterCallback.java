@@ -1,6 +1,5 @@
 package com.alfredo.android.a21pointsandroid;
 
-public interface RegisterCallback {
+public interface RegisterCallback extends RestAPICallBack {
     void onSuccess();
-    void onFailure(Throwable t);
 }

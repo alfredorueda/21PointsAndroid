@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,8 +19,7 @@ import android.widget.TextView;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements RestAPICallBack {
-
+public class LoginActivity extends AppCompatActivity implements  LoginAPICallBack, PointsAPICallBack {
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -111,6 +111,9 @@ public class LoginActivity extends AppCompatActivity implements RestAPICallBack 
 
     @Override
     public void onGetPoints(Points points) {
+
+        Log.d("21Points", "onGetPoints OK " + points.getId());
+
         new AlertDialog.Builder(this)
                 .setTitle("Points")
                 .setMessage(points.toString())
@@ -119,18 +122,18 @@ public class LoginActivity extends AppCompatActivity implements RestAPICallBack 
 
     @Override
     public void onPostPoints(Points points) {
-        new AlertDialog.Builder(this)
-                .setTitle("POST POINTS")
-                .setMessage(points.toString())
-                .show();
+
+        Log.d("21Points", "onPostPoints OK " + points.getId());
 
         RestAPIManager.getInstance().getPointsById(points.getId(), this);
-
 
     }
 
     @Override
     public void onLoginSuccess(UserToken userToken) {
+
+        Log.d("21Points", "onLoginSuccess OK " + userToken.getIdToken());
+
         new AlertDialog.Builder(this)
                 .setTitle("Token")
                 .setMessage("token: "+ userToken.getIdToken())
@@ -155,6 +158,10 @@ public class LoginActivity extends AppCompatActivity implements RestAPICallBack 
 
     @Override
     public void onFailure(Throwable t) {
+
+        Log.d("21Points", "onFailure OK " + t.getMessage());
+
+
         new AlertDialog.Builder(this)
                 .setTitle("Token Error")
                 .setMessage(t.getMessage())

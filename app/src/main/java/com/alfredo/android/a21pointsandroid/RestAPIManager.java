@@ -10,8 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RestAPIManager {
 
-    private static final String BASE_URL = "http://" +
-            "172.20.25.222:8080/";
+    private static final String BASE_URL = "http://" + "192.168.1.129:8080/";
     private static RestAPIManager ourInstance;
     private Retrofit retrofit;
     private RestAPIService restApiService;
@@ -35,7 +34,7 @@ public class RestAPIManager {
 
     }
 
-    public synchronized void getUserToken(String username, String password, final RestAPICallBack restAPICallBack) {
+    public synchronized void getUserToken(String username, String password, final LoginAPICallBack restAPICallBack) {
         UserData userData = new UserData(username, password);
         Call<UserToken> call = restApiService.requestToken(userData);
 
@@ -58,7 +57,7 @@ public class RestAPIManager {
         });
     }
 
-    public synchronized void postPoints(Points points, final RestAPICallBack restAPICallBack) {
+    public synchronized void postPoints(Points points, final PointsAPICallBack pointsAPICallBack) {
         final Points newUserPoints = points;
         Call<Points> call = restApiService.postPoints(newUserPoints, "Bearer " + userToken.getIdToken());
 
@@ -67,20 +66,20 @@ public class RestAPIManager {
             public void onResponse(Call<Points> call, Response<Points> response) {
 
                 if (response.isSuccessful()) {
-                    restAPICallBack.onPostPoints(response.body());
+                    pointsAPICallBack.onPostPoints(response.body());
                 } else {
-                    restAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
                 }
             }
 
             @Override
             public void onFailure(Call<Points> call, Throwable t) {
-                restAPICallBack.onFailure(t);
+                pointsAPICallBack.onFailure(t);
             }
         });
     }
 
-    public synchronized void getPointsById( Integer id , final RestAPICallBack restAPICallBack) {
+    public synchronized void getPointsById( Integer id , final PointsAPICallBack pointsAPICallBack) {
         Call<Points> call = restApiService.getPointsById(id, "Bearer " + userToken.getIdToken());
 
         call.enqueue(new Callback<Points>() {
@@ -88,15 +87,15 @@ public class RestAPIManager {
             public void onResponse(Call<Points> call, Response<Points> response) {
 
                 if (response.isSuccessful()) {
-                    restAPICallBack.onGetPoints(response.body());
+                    pointsAPICallBack.onGetPoints(response.body());
                 } else {
-                    restAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                    pointsAPICallBack.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
                 }
             }
 
             @Override
             public void onFailure(Call<Points> call, Throwable t) {
-                restAPICallBack.onFailure(t);
+                pointsAPICallBack.onFailure(t);
             }
         });
     }

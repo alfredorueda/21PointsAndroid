@@ -15,7 +15,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RestAPIManager {
 
-    private static final String BASE_URL = "http://" + "192.168.1.129:8080/";
+    //private static final String BASE_URL = "http://" + "your_ip:8080/";
+    private static final String BASE_URL = "http://" + "android.byted.xyz/";
     private static RestAPIManager ourInstance;
     private Retrofit retrofit;
     private RestAPIService restApiService;

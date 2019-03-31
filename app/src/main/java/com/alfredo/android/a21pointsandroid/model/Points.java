@@ -1,5 +1,5 @@
 
-package com.alfredo.android.a21pointsandroid;
+package com.alfredo.android.a21pointsandroid.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

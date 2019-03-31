@@ -1,4 +1,8 @@
-package com.alfredo.android.a21pointsandroid;
+package com.alfredo.android.a21pointsandroid.restapi;
+
+import com.alfredo.android.a21pointsandroid.model.Points;
+import com.alfredo.android.a21pointsandroid.model.UserData;
+import com.alfredo.android.a21pointsandroid.model.UserToken;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

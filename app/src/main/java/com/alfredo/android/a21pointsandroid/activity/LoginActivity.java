@@ -1,10 +1,12 @@
-package com.alfredo.android.a21pointsandroid;
+package com.alfredo.android.a21pointsandroid.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
+import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,42 +16,46 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.alfredo.android.a21pointsandroid.restapi.callback.LoginAPICallBack;
+import com.alfredo.android.a21pointsandroid.model.Points;
+import com.alfredo.android.a21pointsandroid.restapi.callback.PointsAPICallBack;
+import com.alfredo.android.a21pointsandroid.R;
+import com.alfredo.android.a21pointsandroid.restapi.RestAPIManager;
+import com.alfredo.android.a21pointsandroid.model.UserToken;
+
 /**
  * A login screen that offers login via email/password.
  */
-public class RegisterActivity extends AppCompatActivity implements RegisterCallback {
-
+public class LoginActivity extends AppCompatActivity implements LoginAPICallBack, PointsAPICallBack {
 
     // UI references.
     private AutoCompleteTextView mEmailView;
-    private AutoCompleteTextView mUsernameView;
     private EditText mPasswordView;
     private View mLoginFormView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_login);
         // Set up the login form.
-        mUsernameView = (AutoCompleteTextView) findViewById(R.id.username);
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                    attemptRegister();
+                    attemptLogin();
                     return true;
                 }
                 return false;
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_register_button);
+        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptRegister();
+                attemptLogin();
             }
         });
 
@@ -61,13 +67,12 @@ public class RegisterActivity extends AppCompatActivity implements RegisterCallb
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptRegister() {
+    private void attemptLogin() {
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String username = mUsernameView.getText().toString();
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
@@ -82,11 +87,11 @@ public class RegisterActivity extends AppCompatActivity implements RegisterCallb
         }
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(email)) {
+        if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailOrUsernameValid(email) | !isEmailOrUsernameValid(username)) {
+        } else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
@@ -97,11 +102,11 @@ public class RegisterActivity extends AppCompatActivity implements RegisterCallb
             // form field with an error.
             focusView.requestFocus();
         } else {
-            RestAPIManager.getInstance().register(username, email, password, this);
+            RestAPIManager.getInstance().getUserToken(email, password, this);
         }
     }
 
-    private boolean isEmailOrUsernameValid(String email) {
+    private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return email.length() > 3;
     }
@@ -112,10 +117,33 @@ public class RegisterActivity extends AppCompatActivity implements RegisterCallb
     }
 
     @Override
-    public void onSuccess() {
+    public void onGetPoints(Points points) {
+
+        Log.d("21Points", "onGetPoints OK " + points.getId());
+
         new AlertDialog.Builder(this)
-                .setTitle("Register")
-                .setMessage("Register successful")
+                .setTitle("Points")
+                .setMessage(points.toString())
+                .show();
+    }
+
+    @Override
+    public void onPostPoints(Points points) {
+
+        Log.d("21Points", "onPostPoints OK " + points.getId());
+
+        RestAPIManager.getInstance().getPointsById(points.getId(), this);
+
+    }
+
+    @Override
+    public void onLoginSuccess(UserToken userToken) {
+
+        Log.d("21Points", "onLoginSuccess OK " + userToken.getIdToken());
+
+        new AlertDialog.Builder(this)
+                .setTitle("Token")
+                .setMessage("token: "+ userToken.getIdToken())
 
                 // Specifying a listener allows you to take an action before dismissing the dialog.
                 // The dialog is automatically dismissed when a dialog button is clicked.
@@ -129,10 +157,18 @@ public class RegisterActivity extends AppCompatActivity implements RegisterCallb
                 .setNegativeButton(android.R.string.no, null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+
+
+        RestAPIManager.getInstance().postPoints(new Points("2019-03-14",1,1,1), this);
+
     }
 
     @Override
     public void onFailure(Throwable t) {
+
+        Log.d("21Points", "onFailure OK " + t.getMessage());
+
+
         new AlertDialog.Builder(this)
                 .setTitle("Token Error")
                 .setMessage(t.getMessage())

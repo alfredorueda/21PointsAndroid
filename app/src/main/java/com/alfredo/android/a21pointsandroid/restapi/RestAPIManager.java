@@ -1,6 +1,11 @@
-package com.alfredo.android.a21pointsandroid;
+package com.alfredo.android.a21pointsandroid.restapi;
 
-import android.graphics.Point;
+import com.alfredo.android.a21pointsandroid.model.Points;
+import com.alfredo.android.a21pointsandroid.restapi.callback.RegisterAPICallback;
+import com.alfredo.android.a21pointsandroid.model.UserData;
+import com.alfredo.android.a21pointsandroid.model.UserToken;
+import com.alfredo.android.a21pointsandroid.restapi.callback.LoginAPICallBack;
+import com.alfredo.android.a21pointsandroid.restapi.callback.PointsAPICallBack;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -100,7 +105,7 @@ public class RestAPIManager {
         });
     }
 
-    public synchronized void register(String username, String email, String password, final RegisterCallback registerCallback) {
+    public synchronized void register(String username, String email, String password, final RegisterAPICallback registerAPICallback) {
         UserData userData = new UserData(username, email, password);
         Call<Void> call = restApiService.register(userData);
 
@@ -109,15 +114,15 @@ public class RestAPIManager {
             public void onResponse(Call<Void> call, Response<Void> response) {
 
                 if (response.isSuccessful()) {
-                    registerCallback.onSuccess();
+                    registerAPICallback.onSuccess();
                 } else {
-                    registerCallback.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
+                    registerAPICallback.onFailure(new Throwable("ERROR " + response.code() + ", " + response.raw().message()));
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                registerCallback.onFailure(t);
+                registerAPICallback.onFailure(t);
             }
         });
     }

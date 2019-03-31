@@ -1,4 +1,4 @@
-package com.alfredo.android.a21pointsandroid;
+package com.alfredo.android.a21pointsandroid.model;
 
 public class UserData {
 
